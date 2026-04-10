@@ -38,6 +38,9 @@ services:
   test:
     build: .
     command: bundle exec rspec
+    volumes:
+      - .:/app
+      - bundle_cache:/usr/local/bundle
     depends_on:
       - db
       - redis

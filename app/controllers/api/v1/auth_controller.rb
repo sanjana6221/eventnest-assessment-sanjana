@@ -32,7 +32,7 @@ module Api
       private
 
       def register_params
-        params.permit(:name, :email, :password, :password_confirmation, :role, :phone)
+        params.permit(:name, :email, :password, :password_confirmation, :phone)
       end
     end
   end

@@ -7,6 +7,7 @@ class User < ApplicationRecord
   validates :email, presence: true, uniqueness: true
   validates :name, presence: true
   validates :role, inclusion: { in: %w[organizer attendee admin] }
+  before_validation :set_default_role, on: :create
 
   def organizer?
     role == "organizer"
@@ -25,5 +26,9 @@ class User < ApplicationRecord
       { user_id: id, exp: 24.hours.from_now.to_i },
       Rails.application.secret_key_base
     )
+  end
+
+  def set_default_role
+    self.role ||= "attendee"
   end
 end

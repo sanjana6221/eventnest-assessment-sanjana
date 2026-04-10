@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -e
 
+bundle check || bundle install
+
 # Configure git hooks for AI conversation capture
 git config core.hooksPath .git-hooks 2>/dev/null || true
 
