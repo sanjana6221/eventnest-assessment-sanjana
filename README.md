@@ -76,10 +76,14 @@ curl -H "Authorization: Bearer <token>" http://localhost:3000/api/v1/events
 - `POST /api/v1/orders` — Create order (authenticated)
 - `POST /api/v1/orders/:id/cancel` — Cancel order (authenticated)
 
+### Bookmarks
+- `GET /api/v1/bookmarks` — List bookmarked events (authenticated)
+- `POST /api/v1/events/:event_id/bookmark` — Bookmark event (authenticated)
+- `DELETE /api/v1/events/:event_id/bookmark` — Remove bookmark (authenticated)
 
 ### Issue fix proofing
 - This fix eliminates a critical privilege escalation vulnerability by enforcing server-side role assignment and preventing user-controlled access level manipulation.
-## Before:
+#### Before:
   curl -X POST http://localhost:3000/api/v1/auth/register \
   -H "Content-Type: application/json" \
   -d '{
@@ -89,14 +93,14 @@ curl -H "Authorization: Bearer <token>" http://localhost:3000/api/v1/events
     "password_confirmation": "password124",
     "role": "admin"
   }'
-## Response:
+#### Response:
 {
   "user": {
     "role": "admin"
   }
 }
 
-## After:
+#### After:
 curl -X POST http://localhost:3000/api/v1/auth/register \
   -H "Content-Type: application/json" \
   -d '{
@@ -106,9 +110,20 @@ curl -X POST http://localhost:3000/api/v1/auth/register \
     "password_confirmation": "password124",
     "role": "admin"
   }'
-## Response:
+#### Response:
 {
   "user": {
     "role": "attendee"
   }
 }
+
+
+### Bookmarking an event:
+curl -X POST http://localhost:3000/api/v1/events/1/bookmark \
+  -H "Authorization: Bearer <token>"
+{"message":"Bookmarked successfully"}
+
+
+curl -X POST http://localhost:3000/api/v1/events/1/bookmark   -H "Authorization: Bearer <same_user_token>"
+{"error":"Already bookmarked"}
+

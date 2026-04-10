@@ -46,7 +46,10 @@ module Api
       end
 
       def show
-        event = Event.find(params[:id])
+        event = Event.includes(:user, :ticket_tiers, :bookmarks).find(params[:id])
+        authorize event if defined?(Pundit)
+
+        bookmark_count = current_user&.organizer? ? event.bookmarks.size : 0
 
         render json: {
           id: event.id,
@@ -71,7 +74,8 @@ module Api
               sold: t.sold_count,
               available: t.available_quantity
             }
-          }
+          },
+          bookmark_count: bookmark_count
         }
       end
 

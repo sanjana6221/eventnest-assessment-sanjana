@@ -22,6 +22,27 @@ RSpec.describe Api::V1::EventsController, type: :request do
     end
   end
 
+  describe "GET /api/v1/events/:id" do
+    it "returns event details" do
+      event = create(:event, status: "published", starts_at: 1.week.from_now, ends_at: 1.week.from_now + 3.hours) 
+      get "/api/v1/events/#{event.id}"
+      expect(response).to have_http_status(:ok)
+      data = JSON.parse(response.body)
+      expect(data["bookmark_count"]).to eq(0)
+    end
+
+    it "returns bookmark count for organizer" do
+      event = create(:event, user: organizer, status: "published", starts_at: 1.week.from_now, ends_at: 1.week.from_now + 3.hours)
+      create(:bookmark, event: event)
+
+      get "/api/v1/events/#{event.id}", headers: auth_headers(organizer)
+
+      expect(response).to have_http_status(:ok)
+      data = JSON.parse(response.body)
+      expect(data["bookmark_count"]).to eq(1)
+    end
+  end
+
   describe "POST /api/v1/events" do
     it "creates an event" do
       event_params = {
